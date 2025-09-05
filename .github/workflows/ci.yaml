@@ -1,0 +1,38 @@
+name: CI
+
+on:
+    pull_request:
+        branches:
+            - develop
+            - main
+
+jobs:
+    validate:
+        name: Validate
+        runs-on: ubuntu-latest
+
+        steps:
+            - name: Checkout code
+              uses: actions/checkout@v4
+
+            - name: Set up Python
+              uses: actions/setup-python@v5
+              with:
+                  python-version: '3.11'
+
+            - name: Install dependencies
+              run: |
+                  pip install poetry
+                  poetry install
+
+            - name: Run linter
+              run: |
+                  poetry run ruff check .
+
+            - name: Run type checker
+              run: |
+                  poetry run mypy flet-app-template
+
+            - name: Run tests
+              run: |
+                  poetry run pytest
